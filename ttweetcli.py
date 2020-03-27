@@ -21,15 +21,15 @@ msg = args.message
 char_lim = 150
 
 if upload == download:
-    logging.warning('Invalid combination of upload and download flags')
-    print('Cannot upload and download at the same time OR no mode was set')
-    sys.exit(0)
+	logging.warning('Invalid combination of upload and download flags')
+	print('Cannot upload and download at the same time OR no mode was set')
+	sys.exit(0)
 if download and msg != '':
-    logging.warning('Message argument will be ignored in download mode')
+	logging.warning('Message argument will be ignored in download mode')
 if upload and len(msg) > 150:
-    logging.warning('Attempted to upload message with size greater than %d', char_lim) 
-    print('Cannot upload a message with size greater than ', char_lim)
-    sys.exit(0)
+	logging.warning('Attempted to upload message with size greater than %d', char_lim) 
+	print('Cannot upload a message with size greater than ', char_lim)
+	sys.exit(0)
 
 server_addr = (ip, port_num)
 sock = None
@@ -69,4 +69,3 @@ finally:
     logging.info('Closing connection/socket')
     sock.close()
     print('Thank you for using this CLI!')
-    
