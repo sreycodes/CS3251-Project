@@ -46,21 +46,21 @@ except Exception as e:
 
 try:
     if upload:
-        sock.send('u')
-        sock.send('%03d' % len(msg))
-        ready = sock.recv(2)
+        sock.send('u'.encode())
+        sock.send(('%03d' % len(msg)).encode())
+        ready = sock.recv(2).decode()
         if ready == 'NA':
             print('Server does not want message')
             raise Exception('Server did not want message of size %d. This should not happen.', len(msg))    
-        sock.send(msg)
+        sock.send(msg.encode())
         logging.info('Succesfully uploaded %s after receiving %s', msg, ready)
         print('Upload successful')
     else:
-        sock.send('d')
+        sock.send('d'.encode())
         #logging.info('[client] Sent d')
-        size = int(sock.recv(3))
+        size = int(sock.recv(3).decode())
         #logging.info('[client] Received size - ', r)
-        rcvd_msg = sock.recv(size)
+        rcvd_msg = sock.recv(size).decode()
         logging.info('Succesfully received %s of size %d', rcvd_msg, size)
         print(rcvd_msg)
 except Exception as e:

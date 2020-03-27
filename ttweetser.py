@@ -37,27 +37,27 @@ while True:
     logging.info('Received a connection from %s', client_addr)
 
     try:
-        mode = connection.recv(1)
+        mode = connection.recv(1).decode()
         print(mode)
         if mode == 'd':
             logging.info('Client wishes to download the message on the server')
             if current_msg is None:
-                connection.send('013') # 13 is the size of the empty message    
-                connection.send('Empty message')
+                connection.send('013'.encode()) # 13 is the size of the empty message    
+                connection.send('Empty message'.encode())
             else:
-                connection.send('%03d' % len(current_msg)) #Always format size as 3 characters
-                connection.send(current_msg)
+                connection.send(('%03d' % len(current_msg)).encode()) #Always format size as 3 characters
+                connection.send(current_msg.encode())
         elif mode == 'u':
             logging.info('Client wishes to upload message. Checking size first')
-            size = int(connection.recv(3))
+            size = int(connection.recv(3).decode())
             if size > char_lim:
                 logging.warning('Protocol Error: Client wishes to send message greater than character limit')
-                connection.send('NA')
+                connection.send('NA'.encode())
                 print('Cant upload messages with size greater than ', char_lim)
             else:
                 logging.info('Size within limit - %d', size)
-                connection.send('OK')
-                current_msg = connection.recv(size)
+                connection.send('OK'.encode())
+                current_msg = connection.recv(size).decode()
                 logging.info('Client message received')
         else:
             logging.warning('Protocol error: Invalid mode %s', mode)
