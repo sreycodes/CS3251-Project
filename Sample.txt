@@ -1,0 +1,96 @@
+-bash-4.1$ python ttweetcli.py -u 127.0.0.1 13005 msg
+Server not found
+-bash-4.1$ python ttweetcli.py -d 127.0.0.1 13005
+Server not found
+-bash-4.1$ python ttweetser.py 13005
+^Z
+[1]+  Stopped                 python ttweetser.py 13005
+-bash-4.1$ bg
+[1]+ python ttweetser.py 13005 &
+-bash-4.1$ python ttweetcli.py -d 127.0.0.1 13005
+Empty message
+Thank you for using this CLI!
+-bash-4.1$ python ttweetcli.py -u 127.0.0.1 13005 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+('Cannot upload a message with size greater than ', 150)
+-bash-4.1$ python ttweetcli.py -d 127.0.0.1 13005
+Empty message
+Thank you for using this CLI!
+-bash-4.1$ python ttweetcli.py -u 127.0.0.1 13005 msg
+Upload successful
+Thank you for using this CLI!
+-bash-4.1$ python ttweetcli.py -d 127.0.0.1 13005
+msg
+Thank you for using this CLI!
+-bash-4.1$ python ttweetcli.py -u 127.0.0.1 13005 msg2
+Upload successful
+Thank you for using this CLI!
+-bash-4.1$ python ttweetcli.py -d 127.0.0.1 13005
+msg2
+Thank you for using this CLI!
+-bash-4.1$ python ttweetcli.py -u 127.0.0.1 13005 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+('Cannot upload a message with size greater than ', 150)
+-bash-4.1$ python ttweetcli.py -d 127.0.0.1 13005
+msg2
+Thank you for using this CLI!
+
+server.log:
+2020-02-12 16:10:49,284;INFO;Server started at port 13005
+2020-02-12 16:10:49,284;INFO;Server is listening for incoming connections
+2020-02-12 16:11:14,359;INFO;Received a connection from ('127.0.0.1', 54544)
+2020-02-12 16:11:14,362;INFO;Client wishes to download the message on the server
+2020-02-12 16:11:14,362;INFO;Connection closed with ('127.0.0.1', 54544)
+2020-02-12 16:11:40,570;INFO;Received a connection from ('127.0.0.1', 54566)
+2020-02-12 16:11:40,573;INFO;Client wishes to download the message on the server
+2020-02-12 16:11:40,573;INFO;Connection closed with ('127.0.0.1', 54566)
+2020-02-12 16:11:49,537;INFO;Received a connection from ('127.0.0.1', 54568)
+2020-02-12 16:11:49,540;INFO;Client wishes to upload message. Checking size first
+2020-02-12 16:11:49,540;INFO;Size within limit - 3
+2020-02-12 16:11:49,541;INFO;Client message received
+2020-02-12 16:11:49,541;INFO;Connection closed with ('127.0.0.1', 54568)
+2020-02-12 16:11:53,846;INFO;Received a connection from ('127.0.0.1', 54570)
+2020-02-12 16:11:53,847;INFO;Client wishes to download the message on the server
+2020-02-12 16:11:53,847;INFO;Connection closed with ('127.0.0.1', 54570)
+2020-02-12 16:12:11,124;INFO;Received a connection from ('127.0.0.1', 54572)
+2020-02-12 16:12:11,127;INFO;Client wishes to upload message. Checking size first
+2020-02-12 16:12:11,127;INFO;Size within limit - 4
+2020-02-12 16:12:11,127;INFO;Client message received
+2020-02-12 16:12:11,127;INFO;Connection closed with ('127.0.0.1', 54572)
+2020-02-12 16:12:12,889;INFO;Received a connection from ('127.0.0.1', 54598)
+2020-02-12 16:12:12,889;INFO;Client wishes to download the message on the server
+2020-02-12 16:12:12,889;INFO;Connection closed with ('127.0.0.1', 54598)
+2020-02-12 16:12:20,713;INFO;Received a connection from ('127.0.0.1', 54620)
+2020-02-12 16:12:20,720;INFO;Client wishes to download the message on the server
+2020-02-12 16:12:20,720;INFO;Connection closed with ('127.0.0.1', 54620)
+
+CLI.log:
+ERROR:root:Server ('127.0.0.1', 13005) not found - [Errno 111] Connection refused
+ERROR:root:Server ('127.0.0.1', 13005) not found - [Errno 111] Connection refused
+INFO:root:Connected to requested server ('127.0.0.1', 13005)
+INFO:root:Succesfully received Empty message of size 13
+INFO:root:Closing connection/socket
+WARNING:root:Attempted to upload message with size greater than 150
+INFO:root:Connected to requested server ('127.0.0.1', 13005)
+INFO:root:Succesfully received Empty message of size 13
+INFO:root:Closing connection/socket
+INFO:root:Connected to requested server ('127.0.0.1', 13005)
+INFO:root:Succesfully uploaded msg
+INFO:root:Closing connection/socket
+INFO:root:Connected to requested server ('127.0.0.1', 13005)
+INFO:root:Succesfully received msg of size 3
+INFO:root:Closing connection/socket
+INFO:root:Connected to requested server ('127.0.0.1', 13005)
+INFO:root:Succesfully uploaded msg2
+INFO:root:Closing connection/socket
+INFO:root:Connected to requested server ('127.0.0.1', 13005)
+INFO:root:Succesfully received msg2 of size 4
+INFO:root:Closing connection/socket
+WARNING:root:Attempted to upload message with size greater than 150
+INFO:root:Connected to requested server ('127.0.0.1', 13005)
+INFO:root:Succesfully received msg2 of size 4
+INFO:root:Closing connection/socket
+WARNING:root:Attempted to upload message with size greater than 150
+INFO:root:Connected to requested server ('127.0.0.1', 13005)
+INFO:root:Succesfully received msg2 of size 4
+INFO:root:Closing connection/socket
+
+Note - The date formatting was added to the CLI later!
