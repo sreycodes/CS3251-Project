@@ -2,34 +2,33 @@ import socket
 import sys
 import argparse
 import logging
+import re
 
 logging.basicConfig(filename='CLI.log', level=logging.INFO, format="%(asctime)s;%(levelname)s;%(message)s")
 
+if len(sys.argv) != 4:
+    print('error: args should contain <ServerIP> <ServerPort> <Username>')
+    sys.exit(1)
+
 parser = argparse.ArgumentParser(description='Welcome to the client CLI')
-parser.add_argument('-u', action='store_true') # To set upload mode
-parser.add_argument('-d', action='store_true') # To set download mode
 parser.add_argument('ip', help='Server IP to connect with')
 parser.add_argument('port', type=int, help='Server Port to connect with')
-parser.add_argument('message', nargs='?', help='Message to upload if -u is set', default='') #Only for upload
+parser.add_argument('username', help='Username to be used to communicate with the Server')
 
 args = parser.parse_args()
-upload = args.u
-download = args.d
 ip = args.ip
 port_num = args.port
-msg = args.message
-char_lim = 150
+username = args.username
 
-if upload == download:
-	logging.warning('Invalid combination of upload and download flags')
-	print('Cannot upload and download at the same time OR no mode was set')
-	sys.exit(0)
-if download and msg != '':
-	logging.warning('Message argument will be ignored in download mode')
-if upload and len(msg) > 150:
-	logging.warning('Attempted to upload message with size greater than %d', char_lim) 
-	print('Cannot upload a message with size greater than ', char_lim)
-	sys.exit(0)
+if not re.search('^(([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])$', ip):
+    print('error: server ip invalid, connection refused.')
+    sys.exit(1)
+if port_num < 0 or port_num > 65535:
+    print('error: server port invalid, connection refused.')
+    sys.exit(1)
+if not re.search('^[a-zA-Z0-9]+$', username):
+    print('error: username has wrong format, connection refused.')
+    sys.exit(1)
 
 server_addr = (ip, port_num)
 sock = None
@@ -42,7 +41,7 @@ try:
 except Exception as e:
     logging.error('Server %s not found - %s', server_addr, e)
     print('Server not found')
-    sys.exit(0)
+    sys.exit(1)
 
 try:
     if upload:
