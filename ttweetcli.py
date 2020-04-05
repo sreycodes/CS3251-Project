@@ -52,7 +52,7 @@ while (true):
             message = command[1]
             hashtag = command[2]
     elif command[0] == 'subscribe':
-         if len(command) != 2:
+        if len(command) != 2:
             print('error: args should contain <Hashtag>')
         else:
             hashtag = command[1]
