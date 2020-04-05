@@ -43,8 +43,8 @@ except Exception as e:
     print('error: server ip invalid, connection refused.')
     sys.exit(1)
 
-while (true):
-    command = raw_input("$ ").split(' ')
+while (True):
+    command = input("$ ").split(' ')
     if command[0] == 'tweet':
         if len(command) != 3:
             print('error: args should contain <Tweet> <Hashtag>')
@@ -74,7 +74,9 @@ while (true):
         logging.info('Closing connection/socket')
         sock.close()
         print('bye bye')
-        sys.exit(1)
+        sys.exit(0)
+    else:
+        print('error: command ' + command[0] + ' not found')
 
 # try:
 #     if upload:
