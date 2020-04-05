@@ -45,17 +45,32 @@ except Exception as e:
 
 while (true):
     command = raw_input("$ ").split(' ')
-    if (command[0] == 'tweet'):
+    if command[0] == 'tweet':
+        if len(command) != 3:
+            print('error: args should contain <Tweet> <Hashtag>')
+        else:
+            message = command[1]
+            hashtag = command[2]
+    elif command[0] == 'subscribe':
+         if len(command) != 2:
+            print('error: args should contain <Hashtag>')
+        else:
+            hashtag = command[1]
+    elif command[0] == 'unsubscribe':
+        if len(command) != 2:
+            print('error: args should contain <Hashtag>')
+        else:
+            hashtag = command[1]
+    elif command[0] == 'timeline':
         pass
-    elif (command[0] == 'subscribe'):
+    elif command[0] == 'getusers':
         pass
-    elif (command[0] == 'unsubscribe'):
-        pass
-    elif (command[0] == 'timeline'):
-        pass
-    elif (command[0] == 'gettweets'):
-        pass
-    elif (command[0] == 'exit'):
+    elif command[0] == 'gettweets':
+        if len(command) != 2:
+            print('error: args should contain <Username>')
+        else:
+            username = command[1]
+    elif command[0] == 'exit':
         logging.info('Closing connection/socket')
         sock.close()
         print('bye bye')
