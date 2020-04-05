@@ -34,14 +34,14 @@ server_addr = (ip, port_num)
 sock = None
 char_lim = 150
 
-try:
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect(server_addr)
-    logging.info('Connected to requested server %s', server_addr)
-except Exception as e:
-    logging.error('Server %s not found - %s', server_addr, e)
-    print('error: server ip invalid, connection refused.')
-    sys.exit(1)
+# try:
+#     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#     sock.connect(server_addr)
+#     logging.info('Connected to requested server %s', server_addr)
+# except Exception as e:
+#     logging.error('Server %s not found - %s', server_addr, e)
+#     print('error: server ip invalid, connection refused.')
+#     sys.exit(1)
 
 while (True):
     command = input("$ ").split(' ')
@@ -51,32 +51,59 @@ while (True):
         else:
             message = command[1]
             hashtag = command[2]
+            if len(message) == 0:
+                print('message format illegal.')
+            elif len(message) > 150:
+                print('message length illegal, connection refused.')
+            elif not re.search('^(#[a-zA-Z0-9]{1,14}){1,5}$', hashtag):
+                print('hashtag illegal format, connection refused.')
+            else:
+                pass
+
     elif command[0] == 'subscribe':
         if len(command) != 2:
             print('error: args should contain <Hashtag>')
         else:
             hashtag = command[1]
+            if not re.search('^#[a-zA-Z0-9]{1,14}$', hashtag):
+                print('hashtag illegal format, connection refused.')
+            else: 
+                pass
+
     elif command[0] == 'unsubscribe':
         if len(command) != 2:
             print('error: args should contain <Hashtag>')
         else:
             hashtag = command[1]
+            if not re.search('^#[a-zA-Z0-9]{1,14}$', hashtag):
+                print('hashtag illegal format, connection refused.')
+            else: 
+                pass
+
     elif command[0] == 'timeline':
         pass
+
     elif command[0] == 'getusers':
         pass
+
     elif command[0] == 'gettweets':
         if len(command) != 2:
             print('error: args should contain <Username>')
         else:
             username = command[1]
+            if not re.search('^[a-zA-Z0-9]+$', username):
+                print('error: username has wrong format, connection refused.')
+            else:
+                pass
+
     elif command[0] == 'exit':
         logging.info('Closing connection/socket')
         sock.close()
         print('bye bye')
         sys.exit(0)
+
     else:
-        print('error: command ' + command[0] + ' not found')
+        print('error: command not found')
 
 # try:
 #     if upload:
