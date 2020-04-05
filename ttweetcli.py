@@ -40,31 +40,49 @@ try:
     logging.info('Connected to requested server %s', server_addr)
 except Exception as e:
     logging.error('Server %s not found - %s', server_addr, e)
-    print('Server not found')
+    print('error: server ip invalid, connection refused.')
     sys.exit(1)
 
-try:
-    if upload:
-        sock.send('u'.encode())
-        sock.send(('%03d' % len(msg)).encode())
-        ready = sock.recv(2).decode()
-        if ready == 'NA':
-            print('Server does not want message')
-            raise Exception('Server did not want message of size %d. This should not happen.', len(msg))    
-        sock.send(msg.encode())
-        logging.info('Succesfully uploaded %s after receiving %s', msg, ready)
-        print('Upload successful')
-    else:
-        sock.send('d'.encode())
-        #logging.info('[client] Sent d')
-        size = int(sock.recv(3).decode())
-        #logging.info('[client] Received size - ', r)
-        rcvd_msg = sock.recv(size).decode()
-        logging.info('Succesfully received %s of size %d', rcvd_msg, size)
-        print(rcvd_msg)
-except Exception as e:
-    logging.error('Error in receiving or sending data %s', e)
-finally:
-    logging.info('Closing connection/socket')
-    sock.close()
-    print('Thank you for using this CLI!')
+while (true):
+    command = raw_input("$ ").split(' ')
+    if (command[0] == 'tweet'):
+        pass
+    elif (command[0] == 'subscribe'):
+        pass
+    elif (command[0] == 'unsubscribe'):
+        pass
+    elif (command[0] == 'timeline'):
+        pass
+    elif (command[0] == 'gettweets'):
+        pass
+    elif (command[0] == 'exit'):
+        logging.info('Closing connection/socket')
+        sock.close()
+        print('bye bye')
+        sys.exit(1)
+
+# try:
+#     if upload:
+#         sock.send('u'.encode())
+#         sock.send(('%03d' % len(msg)).encode())
+#         ready = sock.recv(2).decode()
+#         if ready == 'NA':
+#             print('Server does not want message')
+#             raise Exception('Server did not want message of size %d. This should not happen.', len(msg))    
+#         sock.send(msg.encode())
+#         logging.info('Succesfully uploaded %s after receiving %s', msg, ready)
+#         print('Upload successful')
+#     else:
+#         sock.send('d'.encode())
+#         #logging.info('[client] Sent d')
+#         size = int(sock.recv(3).decode())
+#         #logging.info('[client] Received size - ', r)
+#         rcvd_msg = sock.recv(size).decode()
+#         logging.info('Succesfully received %s of size %d', rcvd_msg, size)
+#         print(rcvd_msg)
+# except Exception as e:
+#     logging.error('Error in receiving or sending data %s', e)
+# finally:
+#     logging.info('Closing connection/socket')
+#     sock.close()
+#     print('Thank you for using this CLI!')
