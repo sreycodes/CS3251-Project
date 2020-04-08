@@ -3,16 +3,19 @@ import sys
 import argparse
 import logging
 
-class Tweet:
-    body, user, hashtags
+users = {}
 
-    __init__(self, body, user, hashtags):
+class Tweet:
+    body, user, hashtag, hashtags
+
+    __init__(self, body, user, hashtag):
         self.body = body
         self.user = user
-        self.hashtags = hashtags
+        self.hashtag = hashtag # Single string used to display
+        self.hashtags = hashtag.split('#')[1:] # Array of all hashtags used in computation
 
 class User:
-    username, tweets, subscriptions
+    username, tweets, subscriptions, timeline
 
     __init__(self, username):
         self.username = username
@@ -24,12 +27,18 @@ class User:
 
     subscribe(self, hashtag):
         if (len(self.subscriptions) < 3):
-            self.subscriptions.append(hashtag)
+            self.subscriptions.append(hashtag[1:])
             return True
         return False
 
     unsubscribe(self, hashtag):
-        self.subscriptions.remove(hashtag)
+        self.subscriptions.remove(hashtag[1:])
+
+    add_to_timeline(self, tweet):
+        timeline.append(tweet)
+
+
+
 
 logging.basicConfig(filename='server.log', level=logging.INFO, format="%(asctime)s;%(levelname)s;%(message)s")
 
@@ -94,3 +103,38 @@ while True:
     finally:
         connection.close()
         logging.info('Connection closed with %s', client_addr)
+
+
+# Creates a new user upon the connection of a new client
+def new_user(username):
+    if not username in users:
+        users[username] = User(username)
+        return True
+    return False
+
+# Creates a new tweet
+def new_tweet(username, body, hashtag):
+    tweet = Tweet(body, username, hashtag)
+    users[username].add_tweet(tweet)
+    for user in users:
+        for tweet_hashtag in tweet.hashtags:
+            if tweet_hashtag in users[user].subscriptions:
+                users[user].add_to_timeline(tweet)
+
+# Gets all tweets in the specified user's timeline
+def get_timeline(username):
+    return users[username].timeline
+
+# Gets all currently online usernames
+def get_usernames():
+    return users.keys()
+
+# Gets all tweets by the specified user
+def get_tweets_by_username(username):
+    if username in users:
+        return users[username].tweets
+    return None
+
+# Removes the user when the client exits
+def close_user(username):
+    users.pop(username, None)
