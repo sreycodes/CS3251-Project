@@ -3,6 +3,34 @@ import sys
 import argparse
 import logging
 
+class Tweet:
+    body, user, hashtags
+
+    __init__(self, body, user, hashtags):
+        self.body = body
+        self.user = user
+        self.hashtags = hashtags
+
+class User:
+    username, tweets, subscriptions
+
+    __init__(self, username):
+        self.username = username
+        self.tweets = []
+        self.subscriptions = []
+
+    add_tweet(self, tweet):
+        self.tweets.append(tweet)
+
+    subscribe(self, hashtag):
+        if (len(self.subscriptions) < 3):
+            self.subscriptions.append(hashtag)
+            return True
+        return False
+
+    unsubscribe(self, hashtag):
+        self.subscriptions.remove(hashtag)
+
 logging.basicConfig(filename='server.log', level=logging.INFO, format="%(asctime)s;%(levelname)s;%(message)s")
 
 parser = argparse.ArgumentParser(description='Welcome to the server')
