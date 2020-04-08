@@ -58,7 +58,11 @@ while (True):
             elif not re.search('^(#[a-zA-Z0-9]{1,14}){1,5}$', hashtag):
                 print('hashtag illegal format, connection refused.')
             else:
-                pass
+                hashtags = hashtag.split('#')[1:]
+                if 'ALL' in hashtags:
+                    print('hashtag illegal format, connection refused.')
+                else:
+
 
     elif command[0] == 'subscribe':
         if len(command) != 2:
