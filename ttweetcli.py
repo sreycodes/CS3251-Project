@@ -4,6 +4,7 @@ import argparse
 import logging
 import re
 import _thread
+import shlex
 
 def accept_message_from_server(socket):
     while True:
@@ -39,12 +40,18 @@ ip = args.ip
 port_num = args.port
 username = args.username
 
+# Checks validity of the IP address using Regular Expression
 if not re.search('^(([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])$', ip):
     print('error: server ip invalid, connection refused.')
     sys.exit(1)
+
+# Checks validity of the Port number
 if port_num < 0 or port_num > 65535:
     print('error: server port invalid, connection refused.')
     sys.exit(1)
+
+# Checks validity of the username using regular expression
+# Note: this only checks that no illegal characters were used, not that the username is unique
 if not re.search('^[a-zA-Z0-9]+$', username):
     print('error: username has wrong format, connection refused.')
     sys.exit(1)
@@ -55,6 +62,7 @@ server_addr = (ip, port_num)
 sock = None
 char_lim = 150
 
+# Attempts to connect to the server specified by the inputted IP Address and Port number
 try:
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(server_addr)
@@ -64,6 +72,7 @@ except Exception as e:
     print('error: server ip invalid, connection refused.')
     sys.exit(1)
 
+# Sends initial message to the server to validate that the username is legal
 try:
     # sock.send(('LO').encode())
     sock.send(('%03d' % len(username)).encode()) #Assuming username has less than 1000 characters
@@ -71,6 +80,8 @@ try:
     status = sock.recv(2).decode()
     if status == 'OK':
         print('username legal, connection established.')
+        # Starts a separate thread to accept messages from the server while the current thread
+        # handles user input
         _thread.start_new_thread(accept_message_from_server, (sock, ))
     else:
         logging.error('username %s not accepted', username)
@@ -81,9 +92,11 @@ except Exception as e:
     print('username illegal, connection refused.')
     sys.exit(1)
 
-
+# Gets the commands inputted by the user
 while (True):
-    command = input().split(' ')
+    # Splits the input into an array representing the separate arguments
+    command = shlex.split(input())
+    print(command)
     if command[0] == 'tweet':
         if len(command) < 3:
             print('error: args should contain <Tweet> <Hashtag>')
