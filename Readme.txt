@@ -7,7 +7,7 @@ Division of Work:
 Sreyans Sipani - Handled the communication between the Client and the Server
 Brock Smith - Handled input on the client side and the backend functionality needed by the Server
 				to process new commands
-Yash Vaidya - 
+Yash Vaidya - Started working on Java version when we couldn't get Python version working at first, tested code
 
 Files:
 1. ttweetser.py - This is the server code. It runs till one manually stops the process.
