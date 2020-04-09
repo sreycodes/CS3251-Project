@@ -96,16 +96,13 @@ except Exception as e:
 while (True):
     # Splits the input into an array representing the separate arguments
     command = shlex.split(input())
-    print(command)
+    
     if command[0] == 'tweet':
         if len(command) < 3:
             print('error: args should contain <Tweet> <Hashtag>')
         else:
-            message = ""
-            for part in command[1: len(command) - 1]:
-                message += (part + " ")
-            message = message[1: len(message) - 2]
-            hashtag = command[len(command) - 1]
+            message = command[1]
+            hashtag = command[2]
             if message == None or len(message) == 0:
                 print('message format illegal.')
             elif len(message) > 150:
