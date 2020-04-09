@@ -19,6 +19,7 @@ def accept_message_from_server(socket):
                 error = socket.recv(error_size).decode()
                 print(error)
             else:
+                # Prints new tweets send by the server
                 print(message)
         except Exception as e:
             logging.error('Encountered error %s. Closing connection', e)
@@ -98,22 +99,24 @@ while (True):
     command = shlex.split(input())
     
     if command[0] == 'tweet':
-        if len(command) < 3:
+        if len(command) != 3: # Checks that the command has the right number of arguments
             print('error: args should contain <Tweet> <Hashtag>')
         else:
             message = command[1]
             hashtag = command[2]
-            if message == None or len(message) == 0:
+            if message == None or len(message) == 0: # Checks that the message exists and is not length 0
                 print('message format illegal.')
-            elif len(message) > 150:
+            elif len(message) > 150: # Checks that the message is less than 150 characters
                 print('message length illegal, connection refused.')
-            elif not re.search('^(#[a-zA-Z0-9]{1,14}){1,5}$', hashtag):
+            elif not re.search('^(#[a-zA-Z0-9]{1,14}){1,5}$', hashtag): # Checks that the hastag is valid using a regular expression
                 print('hashtag illegal format, connection refused.')
             else:
+                # Checks that the ALL hashtag is not used
                 hashtags = hashtag.split('#')[1:]
                 if 'ALL' in hashtags:
                     print('hashtag illegal format, connection refused.')
                 else:
+                    # Sends the Tweet command to the server
                     sock.send('TW'.encode())
                     sock.send(('%03d' % len(message)).encode())
                     sock.send(message.encode())
@@ -122,50 +125,58 @@ while (True):
 
 
     elif command[0] == 'subscribe':
-        if len(command) != 2:
+        if len(command) != 2: # Checks that the command has the right number of arguments
             print('error: args should contain <Hashtag>')
         else:
             hashtag = command[1]
-            if not re.search('^#[a-zA-Z0-9]{1,14}$', hashtag):
+            if not re.search('^#[a-zA-Z0-9]{1,14}$', hashtag): # Checks that the hastag is valid using a regular expression
                 print('hashtag illegal format, connection refused.')
             else: 
+                # Sends the Subscribe command to the server
                 sock.send('SU'.encode())
                 sock.send(('%03d' % len(hashtag)).encode())
                 sock.send(hashtag.encode())
 
     elif command[0] == 'unsubscribe':
-        if len(command) != 2:
+        if len(command) != 2: # Checks that the command has the right number of arguments
             print('error: args should contain <Hashtag>')
         else:
             hashtag = command[1]
-            if not re.search('^#[a-zA-Z0-9]{1,14}$', hashtag):
+            if not re.search('^#[a-zA-Z0-9]{1,14}$', hashtag): # Checks that the hastag is valid using a regular expression
                 print('hashtag illegal format, connection refused.')
-            else: 
+            else:
+                # Sends the Unsubscribe command to the server
                 sock.send('US'.encode())
                 sock.send(('%03d' % len(hashtag)).encode())
                 sock.send(hashtag.encode())
                 print('operation success')
 
     elif command[0] == 'timeline':
+        # Sends the Timeline command to the server
         sock.send('TL'.encode())
 
     elif command[0] == 'getusers':
+        # Sends the Get Users command to the server
         sock.send('GU'.encode())
 
     elif command[0] == 'gettweets':
-        if len(command) != 2:
+        if len(command) != 2: # Checks that the command has the right number of arguments
             print('error: args should contain <Username>')
         else:
             username = command[1]
-            if not re.search('^[a-zA-Z0-9]+$', username):
+            if not re.search('^[a-zA-Z0-9]+$', username): # Checks that the username is valid using regular expressions
                 print('error: username has wrong format, connection refused.')
             else:
+                # Sends the Get Tweets command to the server 
                 sock.send('GT'.encode())
                 sock.send(('%03d' % len(username)).encode())
                 sock.send(username.encode())
 
     elif command[0] == 'exit':
+        # Sends the Exit command to the server
         sock.send('EX'.encode())
+
+        # Closes the connection on the client's side
         logging.info('Closing connection/socket')
         sock.close()
         print('bye bye')
