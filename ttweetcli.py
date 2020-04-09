@@ -51,7 +51,7 @@ while (True):
         else:
             message = command[1]
             hashtag = command[2]
-            if len(message) == 0:
+            if message == None or len(message) == 0:
                 print('message format illegal.')
             elif len(message) > 150:
                 print('message length illegal, connection refused.')
