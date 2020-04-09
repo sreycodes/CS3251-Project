@@ -12,7 +12,7 @@ def accept_message_from_server(socket):
             size = int(_size)
             message = socket.recv(size).decode()
             if message == 'OK':
-                print('operation successful')
+                print('operation success')
             elif message == 'NA':
                 error_size = int(socket.recv(3).decode())
                 error = socket.recv(error_size).decode()
@@ -83,13 +83,16 @@ except Exception as e:
 
 
 while (True):
-    command = input("$ ").split(' ')
+    command = input().split(' ')
     if command[0] == 'tweet':
-        if len(command) != 3:
+        if len(command) < 3:
             print('error: args should contain <Tweet> <Hashtag>')
         else:
-            message = command[1]
-            hashtag = command[2]
+            message = ""
+            for part in command[1: len(command) - 1]:
+                message += (part + " ")
+            message = message[1: len(message) - 2]
+            hashtag = command[len(command) - 1]
             if message == None or len(message) == 0:
                 print('message format illegal.')
             elif len(message) > 150:
@@ -131,7 +134,7 @@ while (True):
                 sock.send('US'.encode())
                 sock.send(('%03d' % len(hashtag)).encode())
                 sock.send(hashtag.encode())
-                print('operation successful')
+                print('operation success')
 
     elif command[0] == 'timeline':
         sock.send('TL'.encode())

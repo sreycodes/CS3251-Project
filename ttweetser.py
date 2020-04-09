@@ -68,7 +68,7 @@ def new_tweet(username, body, hashtag):
         for tweet_hashtag in tweet.hashtags:
             if tweet_hashtag in users[user].subscriptions or 'ALL' in users[user].subscriptions:
                 users[user].add_to_timeline(tweet)
-                messages.add(str(tweet))
+                messages.add(tweet.user + ' "' + tweet.body + '" ' + tweet.hashtag)
         for message in messages:
             try:
                 users[user].conn.send(('%03d' % len(message)).encode())

@@ -1,2 +1,5 @@
 *.log
 *.zip
+checker/
+java/
+.DS_Store
