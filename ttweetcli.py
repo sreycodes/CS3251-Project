@@ -3,12 +3,31 @@ import sys
 import argparse
 import logging
 import re
+import _thread
 
-logging.basicConfig(filename='CLI.log', level=logging.INFO, format="%(asctime)s;%(levelname)s;%(message)s")
+def accept_message_from_server(socket):
+    while True:
+        try:
+            _size = socket.recv(3).decode()
+            size = int(_size)
+            message = socket.recv(size).decode()
+            if message == 'OK':
+                print('operation successful')
+            elif message == 'NA':
+                error_size = int(socket.recv(3).decode())
+                error = socket.recv(error_size).decode()
+                print(error)
+            else:
+                print(message)
+        except Exception as e:
+            logging.error('Encountered error %s. Closing connection', e)
+            socket.close()
+            sys.exit(1)
 
-if len(sys.argv) != 4:
-    print('error: args should contain <ServerIP> <ServerPort> <Username>')
-    sys.exit(1)
+# Not required - argparse takes care!
+# if len(sys.argv) != 4:
+#     print('error: args should contain <ServerIP> <ServerPort> <Username>')
+#     sys.exit(1)
 
 parser = argparse.ArgumentParser(description='Welcome to the client CLI')
 parser.add_argument('ip', help='Server IP to connect with')
@@ -30,18 +49,38 @@ if not re.search('^[a-zA-Z0-9]+$', username):
     print('error: username has wrong format, connection refused.')
     sys.exit(1)
 
+logging.basicConfig(filename='CLI-'+username+'.log', level=logging.INFO, format="%(asctime)s;%(levelname)s;%(message)s")
+
 server_addr = (ip, port_num)
 sock = None
 char_lim = 150
 
-# try:
-#     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#     sock.connect(server_addr)
-#     logging.info('Connected to requested server %s', server_addr)
-# except Exception as e:
-#     logging.error('Server %s not found - %s', server_addr, e)
-#     print('error: server ip invalid, connection refused.')
-#     sys.exit(1)
+try:
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect(server_addr)
+    logging.info('Connected to requested server %s', server_addr)
+except Exception as e:
+    logging.error('Server %s not found - %s', server_addr, e)
+    print('error: server ip invalid, connection refused.')
+    sys.exit(1)
+
+try:
+    # sock.send(('LO').encode())
+    sock.send(('%03d' % len(username)).encode()) #Assuming username has less than 1000 characters
+    sock.send(username.encode())
+    status = sock.recv(2).decode()
+    if status == 'OK':
+        print('username legal, connection established.')
+        _thread.start_new_thread(accept_message_from_server, (sock, ))
+    else:
+        logging.error('username %s not accepted', username)
+        print('username illegal, connection refused.')
+        sys.exit(1)
+except Exception as e:
+    logging.error('username %s not accepted - %s', username, e)
+    print('username illegal, connection refused.')
+    sys.exit(1)
+
 
 while (True):
     command = input("$ ").split(' ')
@@ -62,6 +101,11 @@ while (True):
                 if 'ALL' in hashtags:
                     print('hashtag illegal format, connection refused.')
                 else:
+                    sock.send('TW'.encode())
+                    sock.send(('%03d' % len(message)).encode())
+                    sock.send(message.encode())
+                    sock.send(('%03d' % len(hashtag)).encode())
+                    sock.send(hashtag.encode())
 
 
     elif command[0] == 'subscribe':
@@ -72,7 +116,9 @@ while (True):
             if not re.search('^#[a-zA-Z0-9]{1,14}$', hashtag):
                 print('hashtag illegal format, connection refused.')
             else: 
-                pass
+                sock.send('SU'.encode())
+                sock.send(('%03d' % len(hashtag)).encode())
+                sock.send(hashtag.encode())
 
     elif command[0] == 'unsubscribe':
         if len(command) != 2:
@@ -82,13 +128,16 @@ while (True):
             if not re.search('^#[a-zA-Z0-9]{1,14}$', hashtag):
                 print('hashtag illegal format, connection refused.')
             else: 
-                pass
+                sock.send('US'.encode())
+                sock.send(('%03d' % len(hashtag)).encode())
+                sock.send(hashtag.encode())
+                print('operation successful')
 
     elif command[0] == 'timeline':
-        pass
+        sock.send('TL'.encode())
 
     elif command[0] == 'getusers':
-        pass
+        sock.send('GU'.encode())
 
     elif command[0] == 'gettweets':
         if len(command) != 2:
@@ -98,9 +147,12 @@ while (True):
             if not re.search('^[a-zA-Z0-9]+$', username):
                 print('error: username has wrong format, connection refused.')
             else:
-                pass
+                sock.send('GT'.encode())
+                sock.send(('%03d' % len(username)).encode())
+                sock.send(username.encode())
 
     elif command[0] == 'exit':
+        sock.send('EX'.encode())
         logging.info('Closing connection/socket')
         sock.close()
         print('bye bye')
@@ -108,29 +160,3 @@ while (True):
 
     else:
         print('error: command not found')
-
-# try:
-#     if upload:
-#         sock.send('u'.encode())
-#         sock.send(('%03d' % len(msg)).encode())
-#         ready = sock.recv(2).decode()
-#         if ready == 'NA':
-#             print('Server does not want message')
-#             raise Exception('Server did not want message of size %d. This should not happen.', len(msg))    
-#         sock.send(msg.encode())
-#         logging.info('Succesfully uploaded %s after receiving %s', msg, ready)
-#         print('Upload successful')
-#     else:
-#         sock.send('d'.encode())
-#         #logging.info('[client] Sent d')
-#         size = int(sock.recv(3).decode())
-#         #logging.info('[client] Received size - ', r)
-#         rcvd_msg = sock.recv(size).decode()
-#         logging.info('Succesfully received %s of size %d', rcvd_msg, size)
-#         print(rcvd_msg)
-# except Exception as e:
-#     logging.error('Error in receiving or sending data %s', e)
-# finally:
-#     logging.info('Closing connection/socket')
-#     sock.close()
-#     print('Thank you for using this CLI!')
