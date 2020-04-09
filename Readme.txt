@@ -1,8 +1,13 @@
-Name - Sreyans Sipani
-Email - ssipani6@gatech.edu
-Class Name - CS3251
-Assignment Title - Programming Assignment 1
-Date - Feb 12 2020
+Names - Sreyans Sipani, Brock Smith, Yash Vaidya
+Class Name - CS 3251
+Assignment Title - Programming Assignment 2
+Date - Apr 9 2020
+
+Division of Work:
+Sreyans Sipani - Handled the communication between the Client and the Server
+Brock Smith - Handled input on the client side and the backend functionality needed by the Server
+				to process new commands
+Yash Vaidya - 
 
 Files:
 1. ttweetser.py - This is the server code. It runs till one manually stops the process.
@@ -10,32 +15,33 @@ Files:
 
 Instructions:
 Server: 
-Run command: python ttweetser.py port
-Usage: port is a compulsory argument
+Run command: python ttweetser.py <Port>
+Usage: <Port> is a compulsory argument
 
 Client:
-Run command: python ttweetcli.py [-u] [-d] ip port [message]
-Usage: Set -u flag for upload and -d flag for download. ONLY one flag should be set at a time. 
-ip and port are compulsory arguments. message is only used in upload mode.
+Run command: python ttweetcli.py <ServerIP> <ServerPort> <Username>
+Usage: All are compulsory arguments. <ServerIP> and <ServerPort> are the IP address and the Port
+number of the ttweet server and <Username> is the client's username, which mus be unique. This will
+start the client and connect it to the server, then the following commands can be used.
+
+tweet <Tweet> <Hashtag>
+				Send a new tweet to the server with the body <Tweet> and the hashtag <Hashtag>
+subscribe <Hashtag>
+				Subscribe the client to the hashtag <Hashtag> so that they receive all future
+				tweets with the hashtag <Hashtag>
+unsubscribe <Hashtag>
+				Unsubscribe the client from the hashtag <Hashtag> so that they stop receiving
+				future tweets with the hashtag <Hashtag>
+timeline
+				Print all tweets that the client is or has been subscribed to
+getusers
+				Print all of the currently connected user's usernames
+gettweets <Username>
+				Print all of the tweets sent by the user with the username <Username>
+exit
+				Closes the connection and removes the user from the server
 
 Note - Both processes log to their own respective files.
 
-Test Case Scenario: Refer Sample.txt
-
-Protocol:
-1. Client sends one character specifying the mode - 'u' or 'd'
-In case of upload:
-    2a. Client sends three characters (zero padded if required) specifying the size of the message.
-        Eg - '013', '130', '002'
-    2b. Server sends 'OK' if size is fine and 'NA' if not.
-    2c. Client sends message if it doesn't receive 'NA'.
-In case of download:
-    3a. Server sends three characters (zero padded if required) specifying the size of the message.
-        Eg - '013', '130', '002'
-    3b. Server sends the message and client receives it.
-4. Connection is closed.
-
-Bugs and Limitations - 
-1. The program makes more checks than required.
-2. The program allows an empty string to be uploaded (i.e '') as the specification doesn't disallow
-    it. When an empty string is downloaded, the program will print an empty line.
+Dependent Packages:
+None
