@@ -24,10 +24,10 @@ def accept_message_from_server(socket):
             socket.close()
             sys.exit(1)
 
-# Not required - argparse takes care!
-# if len(sys.argv) != 4:
-#     print('error: args should contain <ServerIP> <ServerPort> <Username>')
-#     sys.exit(1)
+# The project doc specifies that exactly this error appears if not enough arguments are given, so the argparse default error doesn't work
+if len(sys.argv) != 4:
+    print('error: args should contain <ServerIP> <ServerPort> <Username>')
+    sys.exit(1)
 
 parser = argparse.ArgumentParser(description='Welcome to the client CLI')
 parser.add_argument('ip', help='Server IP to connect with')
