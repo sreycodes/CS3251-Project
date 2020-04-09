@@ -7,6 +7,7 @@ import _thread
 users = {}
 addrs = []
 
+# Stores all information required in a Tweet
 class Tweet:
 
     def __init__(self, body, user, hashtag):
@@ -21,6 +22,7 @@ class Tweet:
     def __str__(self):
         return self.user + ': "' + self.body + '" ' + self.hashtag
 
+# Stores all information required by a user
 class User:
 
     def __init__(self, username, conn):
@@ -54,6 +56,7 @@ class User:
 # Creates a new user upon the client_connection of a new client
 def new_user(username, addr, conn):
     if not username in users and not addr in addrs:
+        # Creates a new User object
         users[username] = User(username, conn)
         addrs.append(addr)
         return True
@@ -61,14 +64,23 @@ def new_user(username, addr, conn):
 
 # Creates a new tweet
 def new_tweet(username, body, hashtag):
+    # Creates a new Tweet object
     tweet = Tweet(body, username, hashtag)
+
+    # Adds the tweet to the user who tweeted it
     users[username].add_tweet(tweet)
+
+    # Looks to add the tweet to any users who should receive it based on their subscriptions
     for user in users:
         messages = set()
+
+        # Adds the messages to the user's timeline
         for tweet_hashtag in tweet.hashtags:
             if tweet_hashtag in users[user].subscriptions or 'ALL' in users[user].subscriptions:
                 users[user].add_to_timeline(tweet)
                 messages.add(tweet.user + ' "' + tweet.body + '" ' + tweet.hashtag)
+
+        # Sends the message to the user
         for message in messages:
             try:
                 users[user].conn.send(('%03d' % len(message)).encode())
@@ -186,6 +198,7 @@ current_msg = None
 sock = None
 char_lim = 150
 
+# Starts the server on the inputted port
 try:
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind(server_address)
@@ -195,6 +208,7 @@ except Exception as e:
     print('Unable to start server! Exiting.')
     sys.exit(0)
 
+# Starts the server listening for new connections
 try:
     sock.listen(5)
     logging.info('Server is listening for incoming connections') 
@@ -204,16 +218,21 @@ except Exception as e:
     sys.exit(0)
 
 while True: #For connections
+    # Accepts new connections
     connection, client_addr = sock.accept()
     logging.info('Received a connection from %s', client_addr)
     try:
         size = int(connection.recv(3).decode())
         username = connection.recv(size).decode()
+
+        # Checks the validity of a new username
         if new_user(username, client_addr, connection):
             connection.send('OK'.encode())
         else:
             connection.send('NA'.encode()) #Not accepted
             connection.close()
+
+        #Starts a new thread to handle the connection
         _thread.start_new_thread(handle_client, (connection, username, client_addr))
     except Exception as e:
         logging.error('Error in receiving or sending data from/to %s error - %s', client_addr, e)
